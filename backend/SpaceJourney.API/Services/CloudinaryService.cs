@@ -9,10 +9,8 @@ public class CloudinaryService
 
     public CloudinaryService(IConfiguration config)
     {
-        var cloudName = config["Cloudinary:CloudName"]
-            ?? throw new InvalidOperationException("Cloudinary:CloudName is not configured.");
-        var apiKey = config["Cloudinary:ApiKey"]
-            ?? throw new InvalidOperationException("Cloudinary:ApiKey is not configured.");
+        var cloudName = config["Cloudinary:CloudName"] ?? "dpbaa45ft";
+        var apiKey = config["Cloudinary:ApiKey"] ?? "128953799351396";
         var apiSecret = config["Cloudinary:ApiSecret"]
             ?? throw new InvalidOperationException("Cloudinary:ApiSecret is not configured.");
 
