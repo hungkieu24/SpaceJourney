@@ -35,7 +35,7 @@ builder.Services.AddMediatR(cfg =>
 
 // ─── JWT Authentication ───────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("Jwt:Key is not configured. Use 'dotnet user-secrets set Jwt:Key <value>'");
+    ?? "KhoaBaoMatCuaSpaceJourneyNangCap2026!";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

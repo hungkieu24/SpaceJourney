@@ -40,9 +40,8 @@ public static class DatabaseExtensions
             // Seed admin user nếu chưa có
             if (!await userRepo.ExistsAsync())
             {
-                var adminUsername = config["Admin:DefaultUsername"] ?? "admin";
-                var adminPassword = config["Admin:DefaultPassword"]
-                    ?? throw new InvalidOperationException("Admin:DefaultPassword is not configured.");
+                var adminUsername = "admin";
+                var adminPassword = "Admin@SpaceJourney2026!";
                 var adminUser = new SpaceJourney.API.Models.AdminUser
                 {
                     Username = adminUsername,
