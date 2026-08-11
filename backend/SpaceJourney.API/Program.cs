@@ -35,7 +35,7 @@ builder.Services.AddMediatR(cfg =>
 
 // ─── JWT Authentication ───────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? "KhoaBaoMatCuaSpaceJourneyNangCap2026!";
+    ?? throw new InvalidOperationException("Jwt:Key is not configured. Add it to environment variables on Render.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

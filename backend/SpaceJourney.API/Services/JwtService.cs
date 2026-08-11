@@ -17,7 +17,7 @@ public class JwtService
     public string GenerateToken(string userId, string username)
     {
         var jwtKey = _config["Jwt:Key"]
-            ?? "KhoaBaoMatCuaSpaceJourneyNangCap2026!";
+            ?? throw new InvalidOperationException("Jwt:Key is not configured. Add it to environment variables on Render.");
         var issuer = _config["Jwt:Issuer"] ?? "SpaceJourney";
         var audience = _config["Jwt:Audience"] ?? "SpaceJourneyAdmin";
         var expiresHours = int.Parse(_config["Jwt:ExpiresHours"] ?? "24");
