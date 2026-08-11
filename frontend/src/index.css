@@ -1,0 +1,540 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+/* ─── CSS Variables ─────────────────────────────────────────────────────────── */
+:root {
+  --color-bg: #030712;
+  --color-bg-2: #050d1a;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text: #e2e8f0;
+  --color-text-muted: #64748b;
+  --color-accent: #7c3aed;
+  --color-accent-2: #06b6d4;
+  --color-accent-glow: rgba(124, 58, 237, 0.4);
+  --color-star: rgba(255, 255, 255, 0.8);
+
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 700ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Journey Page — Fullscreen Snap Scroll ─────────────────────────────────── */
+.journey-container {
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+.scene-wrapper {
+  width: 100%;
+  height: 100dvh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ─── Astronaut Photo Cards ─────────────────────────────────────────────────── */
+.astronaut-card {
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.astronaut-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.astronaut-card:hover {
+  border-color: rgba(124, 58, 237, 0.8);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.astronaut-card .name-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 6px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.astronaut-card:hover .name-tag {
+  opacity: 1;
+}
+
+/* ─── Astronaut Modal ───────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modal-card {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 20px;
+  padding: 28px;
+  width: min(380px, 90vw);
+  box-shadow: 0 0 60px rgba(124, 58, 237, 0.2), 0 24px 64px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.modal-card img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.modal-card p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--color-surface-hover);
+  border-color: rgba(124, 58, 237, 0.5);
+}
+
+/* ─── Scene Navigation ──────────────────────────────────────────────────────── */
+.scene-nav {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.scene-title-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.continue-btn {
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #4f46e5 100%);
+  border: none;
+  border-radius: 100px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.continue-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 50px rgba(124, 58, 237, 0.6), 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.continue-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ─── Scene Dots Indicator ──────────────────────────────────────────────────── */
+.scene-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scene-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-smooth);
+  cursor: pointer;
+}
+
+.scene-dot.active {
+  background: var(--color-accent);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.8);
+  transform: scale(1.5);
+}
+
+/* ─── Landscape Guard (Mobile Portrait) ─────────────────────────────────────── */
+.landscape-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px;
+  text-align: center;
+}
+
+.landscape-guard-icon {
+  font-size: 4rem;
+  animation: rotate-hint 2s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  30%, 70% { transform: rotate(90deg); }
+}
+
+.landscape-guard h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.landscape-guard p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  max-width: 260px;
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .landscape-guard {
+    display: flex;
+  }
+}
+
+/* ─── Starfield Background ──────────────────────────────────────────────────── */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--color-star);
+  animation: twinkle var(--duration, 3s) ease-in-out infinite var(--delay, 0s);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.5); }
+}
+
+/* ─── Transition Overlay ────────────────────────────────────────────────────── */
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* ─── Admin Layout ──────────────────────────────────────────────────────────── */
+.admin-layout {
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #030712 0%, #0a0f1e 50%, #050d1a 100%);
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-right: 1px solid var(--color-border);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sidebar .logo {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+}
+
+.admin-nav-item:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.admin-nav-item.active {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--color-accent);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.admin-main {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* ─── Admin Card ────────────────────────────────────────────────────────────── */
+.admin-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.admin-card h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+/* ─── Form Elements ─────────────────────────────────────────────────────────── */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus {
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────────────────── */
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--color-accent), #4f46e5);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-danger {
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* ─── Toggle Switch ─────────────────────────────────────────────────────────── */
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--color-accent);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* ─── Glow Effects ──────────────────────────────────────────────────────────── */
+.glow-purple {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.6);
+}

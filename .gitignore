@@ -1,0 +1,28 @@
+# Credentials — KHÔNG bao giờ commit
+atlas-credentials.env
+*.env
+.env.*
+!.env.example
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+**/Properties/launchSettings.json
+
+# User Secrets (lưu ở %APPDATA%, không phải repo)
+# Secrets ID trong .csproj là OK nhưng bản thân secrets thì không
+secrets.json
+
+# Frontend
+node_modules/
+dist/
+.vite/
+
+# IDE
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
