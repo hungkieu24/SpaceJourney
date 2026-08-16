@@ -34,7 +34,7 @@ export function GlitterScene({ sceneId, title, description }: GlitterSceneProps)
 
       {astronauts.map((a, i) => (
         <AstronautFloat
-          key={a.id} astronaut={a} motionStyle="float"
+          key={a.id} astronaut={a} motionStyle="drift-forward"
           initialX={80 + Math.random() * (window.innerWidth - 200)}
           initialY={60 + Math.random() * (window.innerHeight - 180)}
           delay={i * 0.6}

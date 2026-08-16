@@ -10,7 +10,7 @@ import { ParticleSphereScene } from '../components/originkit/ParticleSphereScene
 import { BlackHoleScene } from '../components/originkit/BlackHoleScene'
 import { TornadoScene } from '../components/originkit/TornadoScene'
 import { GlitterScene } from '../components/originkit/GlitterScene'
-import LineCursor from '../components/originkit/LineCursor'
+
 
 const SCENE_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'globe': GlobeScene,
@@ -80,7 +80,7 @@ export function JourneyPage() {
       <LandscapeGuard />
 
       <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none' }}>
-        <LineCursor label={false} />
+
       </div>
 
       {/* Scene Dots Indicator */}

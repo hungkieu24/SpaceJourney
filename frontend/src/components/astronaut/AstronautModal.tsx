@@ -33,7 +33,7 @@ export function AstronautModal() {
                   src={selectedAstronaut.cloudinaryUrl}
                   alt={selectedAstronaut.name}
                   loading="lazy"
-                  className="w-full aspect-[4/5] object-cover rounded-lg mb-4 shadow-lg shadow-cyan-500/20"
+                  className="w-full h-auto max-h-[60vh] object-contain rounded-lg mb-4 shadow-lg shadow-cyan-500/20 bg-black/40"
                 />
                 <h3 className="text-xl font-bold text-white mb-2">{selectedAstronaut.name}</h3>
                 {selectedAstronaut.description && (

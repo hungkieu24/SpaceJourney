@@ -13,22 +13,32 @@ function SceneTab({ scene, active, onClick, count }: { scene: Scene | null, acti
   })
 
   return (
-    <button
+    <div
       ref={setNodeRef}
-      onClick={onClick}
-      className="btn-primary"
       style={{
-        background: active ? undefined : 'rgba(255,255,255,0.05)',
-        border: active ? undefined : isOver ? '1px dashed #fff' : '1px solid var(--color-border)',
-        fontSize: '0.8rem',
-        padding: '8px 16px',
-        transition: 'all 0.2s',
-        opacity: isOver ? 0.8 : 1,
-        transform: isOver ? 'scale(1.05)' : 'scale(1)'
+        padding: '8px',
+        margin: '-8px',
+        borderRadius: '12px',
+        background: isOver ? 'rgba(255,255,255,0.1)' : 'transparent',
+        transition: 'background 0.2s',
       }}
     >
-      {scene ? scene.displayName : 'Tất cả'} ({count})
-    </button>
+      <button
+        onClick={onClick}
+        className="btn-primary"
+        style={{
+          background: active ? undefined : 'rgba(255,255,255,0.05)',
+          border: active ? undefined : isOver ? '1px dashed #fff' : '1px solid var(--color-border)',
+          fontSize: '0.9rem',
+          padding: '10px 20px',
+          transition: 'all 0.2s',
+          opacity: isOver ? 0.8 : 1,
+          transform: isOver ? 'scale(1.05)' : 'scale(1)'
+        }}
+      >
+        {scene ? scene.displayName : 'Tất cả'} ({count})
+      </button>
+    </div>
   )
 }
 

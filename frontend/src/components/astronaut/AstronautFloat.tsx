@@ -5,7 +5,7 @@ import { useJourneyStore, type Astronaut } from '../../store/journeyStore'
 interface AstronautFloatProps {
   astronaut: Astronaut
   /** Animation style phụ thuộc vào component cảnh */
-  motionStyle: 'orbit' | 'float' | 'spiral-in' | 'tornado-swirl'
+  motionStyle: 'orbit' | 'float' | 'spiral-in' | 'tornado-swirl' | 'drift-forward'
   /** Vị trí ban đầu — random trong cảnh */
   initialX: number
   initialY: number
@@ -56,6 +56,16 @@ export function AstronautFloat({
           rotate: [0, 90, 180, 270, 360],
           scale: [1, 0.95, 0.9, 0.85, 1],
           transition: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay },
+        }
+      case 'drift-forward':
+        const centerX = typeof window !== 'undefined' ? window.innerWidth / 2 : 500
+        const centerY = typeof window !== 'undefined' ? window.innerHeight / 2 : 500
+        return {
+          x: [centerX, initialX],
+          y: [centerY, initialY],
+          scale: [0, 1.2],
+          opacity: [0, 1, 0.8, 0],
+          transition: { duration: 15, repeat: Infinity, ease: 'linear', delay },
         }
     }
   }
