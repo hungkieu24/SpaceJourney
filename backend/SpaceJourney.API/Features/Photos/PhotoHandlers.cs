@@ -52,7 +52,11 @@ public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Ast
         var existing = await _repo.GetByHashAsync(hash);
         if (existing != null)
         {
-            throw new InvalidOperationException($"Ảnh này đã tồn tại trong hệ thống với tên '{existing.Name}'. Vui lòng không tải ảnh trùng lặp.");
+            if (!string.IsNullOrEmpty(existing.CloudinaryPublicId))
+            {
+                await _cloudinary.DeleteAsync(existing.CloudinaryPublicId);
+            }
+            await _repo.DeleteAsync(existing.Id);
         }
 
         var (url, publicId) = await _cloudinary.UploadAsync(request.File);

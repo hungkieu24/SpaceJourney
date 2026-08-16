@@ -180,17 +180,17 @@ export function PhotoManager() {
     setUploading(true)
     
     try {
-      const results = await Promise.all(uploadForm.files.map(async (file) => {
+      await Promise.all(uploadForm.files.map(async (file) => {
         const fd = new FormData()
         fd.append('file', file)
         fd.append('name', '')
         fd.append('description', '')
         fd.append('sceneId', '')
-        const res = await photosApi.upload(fd)
-        return res.data
+        await photosApi.upload(fd)
       }))
       
-      setPhotos(prev => [...prev, ...results])
+      const refreshRes = await photosApi.getAll(undefined, true)
+      setPhotos(refreshRes.data)
       setUploadForm({ files: [] })
       if (fileInputRef.current) fileInputRef.current.value = ''
       setFilterSceneId('') // Switch to "All" tab after upload
