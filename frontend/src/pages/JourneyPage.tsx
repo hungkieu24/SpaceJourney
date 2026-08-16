@@ -41,6 +41,14 @@ export function JourneyPage() {
     setTransitioning(true)
   }
 
+  const handleBack = () => {
+    if (isTransitioning || currentSceneIndex <= 0) return
+    const next = currentSceneIndex - 1
+    setNextSceneIndex(next)
+    setShowScene(false)
+    setTransitioning(true)
+  }
+
   const handleTransitionComplete = useCallback(() => {
     if (nextSceneIndex !== null) {
       goToScene(nextSceneIndex)
@@ -83,19 +91,6 @@ export function JourneyPage() {
 
       </div>
 
-      {/* Scene Dots Indicator */}
-      {scenes.length > 0 && (
-        <div className="scene-dots">
-          {scenes.map((_, i) => (
-            <div
-              key={i}
-              className={`scene-dot ${i === currentSceneIndex ? 'active' : ''}`}
-              onClick={() => !isTransitioning && goToScene(i)}
-              title={scenes[i]?.displayName}
-            />
-          ))}
-        </div>
-      )}
 
       {/* Current Scene */}
       <AnimatePresence mode="wait">
@@ -135,19 +130,26 @@ export function JourneyPage() {
           <p className="scene-title-badge">
             {currentSceneIndex + 1} / {scenes.length} — {currentScene?.displayName}
           </p>
-          {!isLastScene ? (
-            <button className="continue-btn" onClick={handleContinue}>
-              Tiếp tục hành trình →
-            </button>
-          ) : (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{ color: 'rgba(167,139,250,0.7)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.1em' }}
-            >
-              ✦ Hành trình hoàn tất ✦
-            </motion.p>
-          )}
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            {currentSceneIndex > 0 && (
+              <button className="continue-btn" onClick={handleBack} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                ← Quay về
+              </button>
+            )}
+            {!isLastScene ? (
+              <button className="continue-btn" onClick={handleContinue}>
+                Tiếp tục hành trình →
+              </button>
+            ) : (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{ color: 'rgba(167,139,250,0.7)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.1em' }}
+              >
+                ✦ Hành trình hoàn tất ✦
+              </motion.p>
+            )}
+          </div>
         </motion.div>
       )}
 
