@@ -46,13 +46,14 @@ export function TornadoScene({ sceneId, title, description }: TornadoSceneProps)
 
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
         {astronauts.map((a, i) => {
-          const pos = getSwirlPos(i)
+          // Negative delay distributes them evenly along the 20s animation loop
+          const delay = (i / Math.max(astronauts.length, 1)) * -20;
           return (
             <div key={a.id} style={{ pointerEvents: 'auto' }}>
                 <AstronautFloat
                   astronaut={a} motionStyle="tornado-swirl"
-                  initialX={pos.x} initialY={pos.y}
-                  delay={i * 0.4}
+                  initialX={0} initialY={0}
+                  delay={delay}
                 />
             </div>
           )

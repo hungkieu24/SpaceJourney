@@ -28,9 +28,9 @@ public class CloudinaryService
         {
             File = new FileDescription(file.FileName, stream),
             Folder = folder,
-            // Chuẩn hóa: crop fill về 400x400, giữ mặt người (nếu có)
+            // Chuẩn hóa: Giới hạn kích thước tối đa 1920x1920 để không bị quá nặng, nhưng GIỮ NGUYÊN tỷ lệ gốc (không crop vuông)
             Transformation = new Transformation()
-                .Width(400).Height(400).Crop("fill").Gravity("auto")
+                .Width(1920).Height(1920).Crop("limit")
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
