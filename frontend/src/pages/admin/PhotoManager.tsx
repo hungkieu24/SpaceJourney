@@ -112,6 +112,16 @@ function SortablePhoto({ photo, scenes, onToggle, onEdit, onDelete }: {
   )
 }
 
+function ThumbnailPreview({ file }: { file: File }) {
+  const [url, setUrl] = useState('')
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file)
+    setUrl(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [file])
+  return <img src={url} alt="preview" style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--color-border)' }} />
+}
+
 export function PhotoManager() {
   const [photos, setPhotos] = useState<Astronaut[]>([])
   const [scenes, setScenes] = useState<Scene[]>([])
@@ -249,6 +259,18 @@ export function PhotoManager() {
             {uploading ? '⬆️ Đang upload...' : '⬆️ Upload'}
           </button>
         </div>
+        {uploadForm.files.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+            {uploadForm.files.slice(0, 5).map((f, i) => (
+              <ThumbnailPreview key={i} file={f} />
+            ))}
+            {uploadForm.files.length > 5 && (
+              <div style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', fontSize: '0.8rem', border: '1px dashed var(--color-border)' }}>
+                +{uploadForm.files.length - 5}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
