@@ -41,6 +41,20 @@ public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Ast
 
     public async Task<Astronaut> Handle(UploadPhotoCommand request, CancellationToken cancellationToken)
     {
+        string hash;
+        using (var md5 = System.Security.Cryptography.MD5.Create())
+        using (var stream = request.File.OpenReadStream())
+        {
+            var hashBytes = await md5.ComputeHashAsync(stream, cancellationToken);
+            hash = Convert.ToHexString(hashBytes);
+        }
+
+        var existing = await _repo.GetByHashAsync(hash);
+        if (existing != null)
+        {
+            throw new InvalidOperationException($"Ảnh này đã tồn tại trong hệ thống với tên '{existing.Name}'. Vui lòng không tải ảnh trùng lặp.");
+        }
+
         var (url, publicId) = await _cloudinary.UploadAsync(request.File);
 
         // Order = cuối cùng trong cảnh
@@ -54,6 +68,7 @@ public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Ast
             CloudinaryUrl = url,
             CloudinaryPublicId = publicId,
             SceneId = string.IsNullOrEmpty(request.SceneId) ? null : request.SceneId,
+            FileHash = hash,
             Order = nextOrder,
             IsVisible = true
         };

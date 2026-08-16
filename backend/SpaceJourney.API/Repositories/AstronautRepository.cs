@@ -39,6 +39,9 @@ public class AstronautRepository
     public async Task<Astronaut?> GetByIdAsync(string id) =>
         await _astronauts.Find(a => a.Id == id).FirstOrDefaultAsync();
 
+    public async Task<Astronaut?> GetByHashAsync(string hash) =>
+        await _astronauts.Find(a => a.FileHash == hash && a.FileHash != "").FirstOrDefaultAsync();
+
     public async Task InsertAsync(Astronaut astronaut) =>
         await _astronauts.InsertOneAsync(astronaut);
 

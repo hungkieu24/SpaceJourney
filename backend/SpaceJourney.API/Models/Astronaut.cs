@@ -24,6 +24,9 @@ public class Astronaut
     [BsonRepresentation(BsonType.ObjectId)]
     public string? SceneId { get; set; } = null;
 
+    /// <summary>Mã hash MD5 của file gốc để check trùng</summary>
+    public string FileHash { get; set; } = string.Empty;
+
     /// <summary>Thứ tự hiển thị trong cảnh (admin kéo thả)</summary>
     public int Order { get; set; }
 

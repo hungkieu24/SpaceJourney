@@ -32,9 +32,16 @@ public class PhotosController : ControllerBase
         if (request.File is null || request.File.Length == 0)
             return BadRequest(new { message = "Vui lòng chọn file ảnh." });
 
-        var photo = await _mediator.Send(new UploadPhotoCommand(
-            request.File, request.Name, request.Description, request.SceneId));
-        return Ok(photo);
+        try
+        {
+            var photo = await _mediator.Send(new UploadPhotoCommand(
+                request.File, request.Name, request.Description, request.SceneId));
+            return Ok(photo);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     /// <summary>PATCH /api/photos/{id} — Cập nhật thông tin ảnh (admin)</summary>

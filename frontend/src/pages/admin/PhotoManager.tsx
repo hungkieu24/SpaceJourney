@@ -194,8 +194,9 @@ export function PhotoManager() {
       setUploadForm({ files: [] })
       if (fileInputRef.current) fileInputRef.current.value = ''
       setFilterSceneId('') // Switch to "All" tab after upload
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
+      alert(e.response?.data?.message || 'Có lỗi xảy ra khi upload ảnh. Vui lòng thử lại.')
     } finally {
       setUploading(false)
     }
