@@ -32,12 +32,14 @@ function SceneTab({ scene, active, onClick, count }: { scene: Scene | null, acti
   )
 }
 
-function SortablePhoto({ photo, scenes, onToggle, onEdit, onDelete }: {
+function SortablePhoto({ photo, scenes, onToggle, onEdit, onDelete, isSelected, onToggleSelect }: {
   photo: Astronaut
   scenes: Scene[]
   onToggle: (id: string, v: boolean) => void
   onEdit: (photo: Astronaut) => void
   onDelete: (id: string) => void
+  isSelected: boolean
+  onToggleSelect: (id: string, selected: boolean) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: photo.id, data: { type: 'photo', photo } })
 
@@ -51,7 +53,7 @@ function SortablePhoto({ photo, scenes, onToggle, onEdit, onDelete }: {
     <div ref={setNodeRef} style={{ ...style, display: 'flex', flexDirection: 'column' }}>
       <div style={{
         background: 'rgba(255,255,255,0.03)',
-        border: `1px solid ${photo.isVisible ? 'var(--color-border)' : 'rgba(239,68,68,0.2)'}`,
+        border: `2px solid ${isSelected ? 'var(--color-accent)' : photo.isVisible ? 'var(--color-border)' : 'rgba(239,68,68,0.2)'}`,
         borderRadius: '12px',
         overflow: 'hidden',
         cursor: 'pointer',
@@ -71,12 +73,27 @@ function SortablePhoto({ photo, scenes, onToggle, onEdit, onDelete }: {
               fontSize: '1.5rem',
             }}>🙈</div>
           )}
+          {/* Checkbox for selection */}
+          <div
+            onClick={e => { e.stopPropagation(); onToggleSelect(photo.id, !isSelected) }}
+            style={{
+              position: 'absolute', top: '8px', left: '8px',
+              width: '24px', height: '24px', borderRadius: '4px',
+              border: isSelected ? 'none' : '2px solid rgba(255,255,255,0.8)',
+              background: isSelected ? 'var(--color-accent)' : 'rgba(0,0,0,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', zIndex: 2
+            }}
+          >
+            {isSelected && <span style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>✓</span>}
+          </div>
+
           {/* Drag handle */}
           <div
             {...attributes} {...listeners}
             onClick={e => e.stopPropagation()}
             style={{
-              position: 'absolute', top: '8px', left: '8px',
+              position: 'absolute', top: '8px', right: '8px',
               background: 'rgba(0,0,0,0.6)', borderRadius: '6px',
               padding: '4px 6px', cursor: 'grab', fontSize: '1rem', color: '#fff',
             }}
@@ -130,6 +147,7 @@ export function PhotoManager() {
   const [uploadForm, setUploadForm] = useState({ files: [] as File[] })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [editingPhoto, setEditingPhoto] = useState<Astronaut | null>(null)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   // Edit Modal State
   const [editName, setEditName] = useState('')
@@ -153,12 +171,25 @@ export function PhotoManager() {
     if (String(over.id).startsWith('scene-')) {
       const targetSceneId = over.data.current?.sceneId || ''
       const photoId = String(active.id)
-      const photo = photos.find(p => p.id === photoId)
       
-      if (photo && photo.sceneId !== targetSceneId) {
-        setPhotos(prev => prev.map(p => p.id === photoId ? { ...p, sceneId: targetSceneId } : p))
-        await photosApi.update(photoId, { sceneId: targetSceneId })
+      const idsToMove = selectedIds.includes(photoId) ? selectedIds : [photoId]
+
+      const updates = idsToMove.map(id => {
+        const photo = photos.find(p => p.id === id)
+        if (photo && photo.sceneId !== targetSceneId) {
+          return { id, targetSceneId }
+        }
+        return null
+      }).filter(Boolean) as {id: string, targetSceneId: string}[]
+
+      if (updates.length > 0) {
+        setPhotos(prev => prev.map(p => {
+          const update = updates.find(u => u.id === p.id)
+          return update ? { ...p, sceneId: update.targetSceneId } : p
+        }))
+        await Promise.all(updates.map(u => photosApi.update(u.id, { sceneId: u.targetSceneId })))
       }
+      setSelectedIds([])
       return
     }
 
@@ -235,6 +266,19 @@ export function PhotoManager() {
     }
   }
 
+  const handleToggleSelect = (id: string, selected: boolean) => {
+    setSelectedIds(prev => selected ? [...prev, id] : prev.filter(x => x !== id))
+  }
+
+  const handleBatchDelete = async () => {
+    if (selectedIds.length === 0) return
+    if (!confirm(`Xóa vĩnh viễn ${selectedIds.length} ảnh đã chọn?`)) return
+    
+    setPhotos(prev => prev.filter(p => !selectedIds.includes(p.id)))
+    await Promise.all(selectedIds.map(id => photosApi.delete(id)))
+    setSelectedIds([])
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
       <div style={{ flexShrink: 0 }}>
@@ -278,7 +322,7 @@ export function PhotoManager() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         {/* Filter by scene (Droppable Tabs) */}
-        <div style={{ flexShrink: 0, display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <div style={{ flexShrink: 0, display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
           <SceneTab 
             scene={null} 
             active={filterSceneId === ''} 
@@ -296,6 +340,21 @@ export function PhotoManager() {
           ))}
         </div>
 
+        {/* Batch Toolbar */}
+        {selectedIds.length > 0 && (
+          <div style={{ 
+            flexShrink: 0, padding: '12px 16px', background: 'rgba(124, 58, 237, 0.1)', 
+            border: '1px solid var(--color-accent)', borderRadius: '8px', marginBottom: '16px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+          }}>
+            <span style={{ fontWeight: 600, color: '#fff' }}>Đã chọn {selectedIds.length} ảnh</span>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-primary" style={{ background: 'transparent', border: '1px solid var(--color-text-muted)' }} onClick={() => setSelectedIds([])}>Bỏ chọn</button>
+              <button className="btn-danger" style={{ padding: '8px 16px', borderRadius: '8px' }} onClick={handleBatchDelete}>Xóa {selectedIds.length} ảnh</button>
+            </div>
+          </div>
+        )}
+
         {/* Photo Grid with DnD (Sortable inside the list) */}
         <div className="photo-grid-scroll" style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', paddingBottom: '32px' }}>
           <SortableContext items={displayed.map(p => p.id)} strategy={rectSortingStrategy}>
@@ -308,6 +367,8 @@ export function PhotoManager() {
                 onToggle={handleToggle}
                 onEdit={openEditModal}
                 onDelete={handleDelete}
+                isSelected={selectedIds.includes(photo.id)}
+                onToggleSelect={handleToggleSelect}
               />
             ))}
           </div>

@@ -13,15 +13,8 @@ export function TornadoScene({ sceneId, title, description }: TornadoSceneProps)
     photosApi.getAll(sceneId).then(res => setAstronauts(res.data))
   }, [sceneId])
 
-  // Vị trí xoắn theo đường xoắn ốc của tornado
-  const getSwirlPos = (i: number) => {
-    const t = (i / Math.max(astronauts.length, 1)) * 2 * Math.PI
-    const r = 180 + Math.cos(i) * 40
-    return {
-      x: window.innerWidth / 2 + Math.cos(t + i) * r - 40,
-      y: window.innerHeight / 2 + (i / astronauts.length - 0.5) * 300 - 50,
-    }
-  }
+  // Vị trí đã được chuyển vào AstronautFloat
+
 
   return (
     <div className="scene-wrapper" style={{ background: '#000000', width: '100vw', height: '100dvh', overflow: 'hidden' }}>
