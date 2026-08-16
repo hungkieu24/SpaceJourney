@@ -2,48 +2,7 @@ import { useEffect, useState } from 'react'
 import { photosApi } from '../../api/client'
 import { AstronautFloat } from '../astronaut/AstronautFloat'
 import type { Astronaut } from '../../store/journeyStore'
-
-function TornadoVisual() {
-  return (
-    <div style={{ position: 'relative', width: '300px', height: '500px', display: 'flex', justifyContent: 'center' }}>
-      <style>{`
-        @keyframes tornado-spin { from{transform:rotateY(0)} to{transform:rotateY(360deg)} }
-        @keyframes tornado-drift { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
-      `}</style>
-      {/* Tornado funnel — nhiều ellipse xếp chồng */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const yPos = i * 38
-        const width = 20 + i * 22
-        const opacity = 0.15 + i * 0.05
-        return (
-          <div key={i} style={{
-            position: 'absolute',
-            top: `${yPos}px`,
-            width: `${width}px`,
-            height: '16px',
-            borderRadius: '50%',
-            border: `2px solid rgba(124,58,237,${opacity})`,
-            background: `rgba(79,70,229,${opacity * 0.3})`,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            filter: 'blur(1px)',
-            animation: `tornado-drift ${1.5 + i * 0.1}s ease-in-out infinite ${i % 2 === 0 ? '' : 'reverse'}`,
-            boxShadow: `0 0 ${8 + i * 2}px rgba(124,58,237,0.3)`,
-          }} />
-        )
-      })}
-      {/* Center energy column */}
-      <div style={{
-        position: 'absolute',
-        top: 0, bottom: 0, left: '50%',
-        transform: 'translateX(-50%)',
-        width: '3px',
-        background: 'linear-gradient(to bottom, rgba(167,139,250,0.9), rgba(79,70,229,0.3), transparent)',
-        filter: 'blur(2px)',
-      }} />
-    </div>
-  )
-}
+import Tornado from './Tornado'
 
 interface TornadoSceneProps { sceneId: string; title: string; description: string }
 
@@ -65,26 +24,47 @@ export function TornadoScene({ sceneId, title, description }: TornadoSceneProps)
   }
 
   return (
-    <div className="scene-wrapper" style={{ background: 'radial-gradient(ellipse at 50% 30%, #0f0824 0%, #030712 70%)' }}>
-      <TornadoVisual />
+    <div className="scene-wrapper" style={{ background: '#000000', width: '100vw', height: '100dvh', overflow: 'hidden' }}>
+      
+      {/* Originkit Tornado Background */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+        <Tornado
+            background="#000000"
+            topRadius={500}
+            waistRadius={100}
+            waistPosition={60}
+            bottomRadius={1200}
+            twist={4}
+            zoom={70}
+            speed={15}
+            direction="right"
+            dots={true}
+            comets={true}
+            repel={true}
+        />
+      </div>
 
-      {astronauts.map((a, i) => {
-        const pos = getSwirlPos(i)
-        return (
-          <AstronautFloat
-            key={a.id} astronaut={a} motionStyle="tornado-swirl"
-            initialX={pos.x} initialY={pos.y}
-            delay={i * 0.4}
-          />
-        )
-      })}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
+        {astronauts.map((a, i) => {
+          const pos = getSwirlPos(i)
+          return (
+            <div key={a.id} style={{ pointerEvents: 'auto' }}>
+                <AstronautFloat
+                  astronaut={a} motionStyle="tornado-swirl"
+                  initialX={pos.x} initialY={pos.y}
+                  delay={i * 0.4}
+                />
+            </div>
+          )
+        })}
+      </div>
 
-      <div style={{ position: 'absolute', top: '40px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 10 }}>
+      <div style={{ position: 'absolute', top: '40px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 10, pointerEvents: 'none' }}>
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.2em', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
           Cơn Lốc Thiên Hà
         </p>
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginTop: '4px' }}>{title}</h2>
-        <p style={{ color: 'var(--color-text-muted)', maxWidth: '400px', marginTop: '8px', fontSize: '0.9rem' }}>{description}</p>
+        <h2 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', marginTop: '4px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{title}</h2>
+        <p style={{ color: 'var(--color-text-muted)', maxWidth: '400px', marginTop: '8px', fontSize: '1rem', textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{description}</p>
       </div>
     </div>
   )

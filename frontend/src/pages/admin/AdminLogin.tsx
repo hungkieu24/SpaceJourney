@@ -1,127 +1,69 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { authApi } from '../../api/client'
 import { useAdminStore } from '../../store/journeyStore'
+import { authApi } from '../../api/client'
+import { EncryptButton } from '../../components/originkit/EncryptButton'
 
 export function AdminLogin() {
-  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { login } = useAdminStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const login = useAdminStore((s) => s.login)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+    setIsLoading(true)
     try {
-      const res = await authApi.login(username, password)
+      const res = await authApi.login('admin', password)
       login(res.data.token)
-      navigate('/admin')
+      navigate('/admin/scenes')
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại.')
+      setError(err.response?.data?.message || 'Lỗi đăng nhập')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      background: 'radial-gradient(ellipse at 50% 30%, #0d0824 0%, #030712 70%)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '20px',
-    }}>
-      {/* Stars */}
-      {Array.from({ length: 40 }).map((_, i) => (
-        <div key={i} style={{
-          position: 'fixed',
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          width: '2px', height: '2px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.5)',
-          animation: `twinkle ${2 + Math.random() * 3}s ease-in-out infinite ${Math.random() * 3}s`,
-          pointerEvents: 'none',
-        }} />
-      ))}
+    <div className="min-h-[100dvh] flex items-center justify-center bg-[#030712] relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[100px]" />
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        style={{
-          width: 'min(420px, 100%)',
-          background: 'rgba(15, 23, 42, 0.9)',
-          border: '1px solid rgba(124,58,237,0.25)',
-          borderRadius: '24px',
-          padding: '40px',
-          backdropFilter: 'blur(20px)',
-          boxShadow: '0 0 60px rgba(124,58,237,0.15), 0 24px 80px rgba(0,0,0,0.5)',
-          position: 'relative', zIndex: 1,
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🚀</div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>
-            Mission Control
-          </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-            Đăng nhập vào bảng điều khiển admin
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="relative z-10 w-full max-w-sm p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+        <h2 className="text-2xl font-bold text-white mb-6 font-mono text-center tracking-wider">
+          SYSTEM_AUTH
+        </h2>
+        
+        <form onSubmit={handleLogin} className="flex flex-col gap-5">
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)', marginBottom: '6px', letterSpacing: '0.05em' }}>
-              TÊN ĐĂNG NHẬP
+            <label className="block text-sm font-medium text-slate-400 mb-2 font-mono">
+              ACCESS_KEY
             </label>
             <input
-              className="form-input"
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              placeholder="admin"
-              autoComplete="username"
-              required
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)', marginBottom: '6px', letterSpacing: '0.05em' }}>
-              MẬT KHẨU
-            </label>
-            <input
-              className="form-input"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              required
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-black/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono"
+              placeholder="Nhập mật khẩu..."
+              autoFocus
             />
           </div>
-
-          {error && (
-            <motion.p
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center' }}
-            >
-              {error}
-            </motion.p>
-          )}
-
-          <button
-            className="btn-primary"
-            type="submit"
-            disabled={loading}
-            style={{ marginTop: '8px', width: '100%', padding: '14px' }}
-          >
-            {loading ? 'Đang kết nối...' : '🚀 Vào Mission Control'}
-          </button>
+          
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+          
+          <div className="flex justify-center mt-2">
+            {isLoading ? (
+              <span className="text-purple-400 font-mono animate-pulse">VERIFYING...</span>
+            ) : (
+              <EncryptButton text="INITIALIZE_UPLINK" className="w-full" />
+            )}
+          </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   )
 }

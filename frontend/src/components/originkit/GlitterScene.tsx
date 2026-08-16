@@ -2,46 +2,7 @@ import { useEffect, useState } from 'react'
 import { photosApi } from '../../api/client'
 import { AstronautFloat } from '../astronaut/AstronautFloat'
 import type { Astronaut } from '../../store/journeyStore'
-
-function GlitterBackground() {
-  // Generate 80 star particles via CSS
-  const stars = Array.from({ length: 80 }, (_, i) => ({
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: 0.5 + Math.random() * 2,
-    duration: 2 + Math.random() * 4,
-    delay: Math.random() * 5,
-    color: Math.random() > 0.7 ? 'rgba(167,139,250,0.9)' : 'rgba(255,255,255,0.8)',
-  }))
-
-  return (
-    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-      {stars.map((s, i) => (
-        <div key={i} style={{
-          position: 'absolute',
-          left: `${s.x}%`, top: `${s.y}%`,
-          width: `${s.size}px`, height: `${s.size}px`,
-          borderRadius: '50%',
-          background: s.color,
-          animation: `twinkle ${s.duration}s ease-in-out infinite ${s.delay}s`,
-        }} />
-      ))}
-      {/* Galaxy nebula overlays */}
-      <div style={{
-        position: 'absolute', top: '20%', left: '10%',
-        width: '300px', height: '200px',
-        background: 'radial-gradient(ellipse, rgba(124,58,237,0.06) 0%, transparent 70%)',
-        filter: 'blur(20px)',
-      }} />
-      <div style={{
-        position: 'absolute', bottom: '20%', right: '10%',
-        width: '250px', height: '180px',
-        background: 'radial-gradient(ellipse, rgba(6,182,212,0.05) 0%, transparent 70%)',
-        filter: 'blur(20px)',
-      }} />
-    </div>
-  )
-}
+import GlitterWrap from './GlitterWrap'
 
 interface GlitterSceneProps { sceneId: string; title: string; description: string }
 
@@ -53,8 +14,23 @@ export function GlitterScene({ sceneId, title, description }: GlitterSceneProps)
   }, [sceneId])
 
   return (
-    <div className="scene-wrapper" style={{ background: 'radial-gradient(ellipse at 50% 40%, #0a0520 0%, #030712 65%)' }}>
-      <GlitterBackground />
+    <div className="scene-wrapper" style={{ background: '#0a0520' }}>
+      <div className="absolute inset-0 z-0">
+        <GlitterWrap
+            particleCount={400}
+            color1="#ffffff"
+            color2="#a78bfa"
+            color3="#06b6d4"
+            speed={4}
+            density={80}
+            starSize={15}
+            focalDepth={15}
+            turbulence={2}
+            brightness={90}
+            glitterIntensity={5}
+            trailAmount={95}
+        />
+      </div>
 
       {astronauts.map((a, i) => (
         <AstronautFloat

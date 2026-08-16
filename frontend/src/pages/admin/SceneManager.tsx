@@ -8,7 +8,7 @@ import type { Scene } from '../../store/journeyStore'
 
 const COMPONENT_LABELS: Record<string, string> = {
   'globe': '🌍 Globe — Trái Đất',
-  'particle-sphere': '✨ Particle Sphere',
+  'particle-sphere': '✨ Rising Lines',
   'black-hole': '🕳️ Black Hole',
   'tornado': '🌪️ Tornado',
   'glitter-wrap': '💫 Glitter Wrap',

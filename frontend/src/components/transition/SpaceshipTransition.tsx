@@ -25,100 +25,113 @@ export function SpaceshipTransition({ onComplete }: SpaceshipTransitionProps) {
 
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000)
-    camera.position.set(0, 0, 10)
+    camera.position.set(0, 0, 100)
 
-    // ─── Starfield Particles ────────────────────────────────────────────────────
-    const starCount = 400
+    // ─── Hyperspace Warp Lines ──────────────────────────────────────────────────
+    const starCount = 3000
     const starGeo = new THREE.BufferGeometry()
-    const starPos = new Float32Array(starCount * 3)
+    const starPos = new Float32Array(starCount * 6) // 2 points per line (head, tail)
+    const starVel = new Float32Array(starCount)
+    const starColors = new Float32Array(starCount * 6)
+    
+    const colorChoices = [
+      new THREE.Color(0x4f46e5), // Indigo
+      new THREE.Color(0x7c3aed), // Violet
+      new THREE.Color(0x06b6d4), // Cyan
+      new THREE.Color(0xffffff), // White
+    ]
+
     for (let i = 0; i < starCount; i++) {
-      starPos[i * 3] = (Math.random() - 0.5) * 60
-      starPos[i * 3 + 1] = (Math.random() - 0.5) * 30
-      starPos[i * 3 + 2] = (Math.random() - 0.5) * 20
+      const x = (Math.random() - 0.5) * 600
+      const y = (Math.random() - 0.5) * 600
+      const z = (Math.random() - 0.5) * 1000
+      
+      starPos[i * 6] = x
+      starPos[i * 6 + 1] = y
+      starPos[i * 6 + 2] = z
+      
+      starPos[i * 6 + 3] = x
+      starPos[i * 6 + 4] = y
+      starPos[i * 6 + 5] = z - 2
+      
+      starVel[i] = 1 + Math.random() * 3
+
+      const col = colorChoices[Math.floor(Math.random() * colorChoices.length)]
+      starColors[i * 6] = col.r
+      starColors[i * 6 + 1] = col.g
+      starColors[i * 6 + 2] = col.b
+      starColors[i * 6 + 3] = col.r
+      starColors[i * 6 + 4] = col.g
+      starColors[i * 6 + 5] = col.b
     }
+    
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
-    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.7 })
-    const stars = new THREE.Points(starGeo, starMat)
-    scene.add(stars)
-
-    // ─── Low-Poly Spaceship ─────────────────────────────────────────────────────
-    const shipGroup = new THREE.Group()
-
-    // Thân tàu chính (ConeGeometry)
-    const bodyGeo = new THREE.ConeGeometry(0.4, 1.6, 6)
-    const bodyMat = new THREE.MeshPhongMaterial({
-      color: 0x7c3aed,
-      emissive: 0x4f46e5,
-      emissiveIntensity: 0.3,
-      shininess: 80,
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3))
+    
+    const lineMat = new THREE.LineBasicMaterial({ 
+      vertexColors: true, 
+      transparent: true, 
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending 
     })
-    const body = new THREE.Mesh(bodyGeo, bodyMat)
-    body.rotation.z = -Math.PI / 2 // Nằm ngang, mũi nhọn về phía phải
-    shipGroup.add(body)
+    
+    const lines = new THREE.LineSegments(starGeo, lineMat)
+    scene.add(lines)
 
-    // Cánh trái
-    const wingGeo = new THREE.BoxGeometry(0.6, 0.08, 0.4)
-    const wingMat = new THREE.MeshPhongMaterial({ color: 0x4f46e5, emissive: 0x7c3aed, emissiveIntensity: 0.2 })
-    const wingLeft = new THREE.Mesh(wingGeo, wingMat)
-    wingLeft.position.set(-0.2, 0.3, 0)
-    wingLeft.rotation.z = 0.3
-    shipGroup.add(wingLeft)
-
-    // Cánh phải
-    const wingRight = new THREE.Mesh(wingGeo, wingMat)
-    wingRight.position.set(-0.2, -0.3, 0)
-    wingRight.rotation.z = -0.3
-    shipGroup.add(wingRight)
-
-    // Engine glow
-    const engineGeo = new THREE.SphereGeometry(0.15, 8, 8)
-    const engineMat = new THREE.MeshPhongMaterial({
-      color: 0x06b6d4,
-      emissive: 0x06b6d4,
-      emissiveIntensity: 1,
-    })
-    const engine = new THREE.Mesh(engineGeo, engineMat)
-    engine.position.set(-0.8, 0, 0)
-    shipGroup.add(engine)
-
-    // Bắt đầu từ bên trái màn hình
-    shipGroup.position.set(-14, 0, 0)
-    scene.add(shipGroup)
-
-    // ─── Lighting ───────────────────────────────────────────────────────────────
-    const ambientLight = new THREE.AmbientLight(0x111133, 2)
-    scene.add(ambientLight)
-    const pointLight = new THREE.PointLight(0x7c3aed, 3, 20)
-    pointLight.position.set(0, 3, 5)
-    scene.add(pointLight)
+    // ─── Flash Effect ───────────────────────────────────────────────────────────
+    const flashGeo = new THREE.PlaneGeometry(width * 2, height * 2)
+    const flashMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 })
+    const flash = new THREE.Mesh(flashGeo, flashMat)
+    flash.position.z = 80
+    scene.add(flash)
 
     // ─── Animation ──────────────────────────────────────────────────────────────
     let elapsed = 0
-    const DURATION = 1.8 // giây
+    const DURATION = 2.2 // seconds
     let animId: number
 
     const animate = () => {
       animId = requestAnimationFrame(animate)
-      elapsed += 0.016 // ~60fps
+      elapsed += 0.016 
 
-      // Tàu bay từ trái sang phải
-      const progress = elapsed / DURATION
-      shipGroup.position.x = THREE.MathUtils.lerp(-14, 18, Math.pow(progress, 0.7))
+      const progress = Math.min(elapsed / DURATION, 1)
+      
+      // Exponential speed increase for warp effect
+      const speedMult = Math.pow(progress, 4) * 800
 
-      // Nhấp nhô nhẹ theo chiều dọc
-      shipGroup.position.y = Math.sin(elapsed * 4) * 0.15
+      const positions = starGeo.attributes.position.array as Float32Array
 
-      // Xoay nhẹ
-      shipGroup.rotation.z = Math.sin(elapsed * 3) * 0.08
+      for (let i = 0; i < starCount; i++) {
+        starVel[i] += 0.1 + speedMult * 0.05
+        
+        // Move head forward (towards camera +z)
+        positions[i * 6 + 2] += starVel[i]
+        
+        // Stretch tail backwards based on velocity
+        positions[i * 6 + 5] = positions[i * 6 + 2] - starVel[i] * 4
 
-      // Engine glow pulsate
-      engineMat.emissiveIntensity = 0.8 + Math.sin(elapsed * 10) * 0.2
+        // Reset if passed camera
+        if (positions[i * 6 + 2] > 150) {
+          positions[i * 6 + 2] = -1000
+          positions[i * 6 + 5] = -1000
+          starVel[i] = 1 + Math.random() * 3
+        }
+      }
+      starGeo.attributes.position.needsUpdate = true
+      
+      // Screen shake at peak warp
+      if (progress > 0.4 && progress < 0.8) {
+         camera.position.x = (Math.random() - 0.5) * 2
+         camera.position.y = (Math.random() - 0.5) * 2
+      } else {
+         camera.position.x = 0
+         camera.position.y = 0
+      }
 
-      // Sao lướt ngược chiều (tạo cảm giác tốc độ)
-      stars.position.x -= 0.15
-
-      // Engine light theo tàu
-      pointLight.position.x = shipGroup.position.x
+      // Flash at the end
+      if (progress > 0.75) {
+        flashMat.opacity = (progress - 0.75) * 4
+      }
 
       renderer.render(scene, camera)
 
@@ -135,6 +148,7 @@ export function SpaceshipTransition({ onComplete }: SpaceshipTransitionProps) {
     const cleanup = () => {
       cancelAnimationFrame(animId)
       renderer.dispose()
+      if (renderer.forceContextLoss) renderer.forceContextLoss()
       if (mount.contains(renderer.domElement)) {
         mount.removeChild(renderer.domElement)
       }
@@ -147,7 +161,7 @@ export function SpaceshipTransition({ onComplete }: SpaceshipTransitionProps) {
     <div
       ref={mountRef}
       className="transition-overlay"
-      style={{ pointerEvents: 'none' }}
+      style={{ pointerEvents: 'none', background: '#000' }}
     />
   )
 }

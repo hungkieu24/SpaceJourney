@@ -21,12 +21,12 @@ public class GetPhotosQueryHandler : IRequestHandler<GetPhotosQuery, List<Astron
                 ? await _repo.GetAllBySceneIdAsync(request.SceneId)
                 : await _repo.GetBySceneIdAsync(request.SceneId);
 
-        return await _repo.GetAllVisibleAsync();
+        return request.AdminView ? await _repo.GetAllAdminAsync() : await _repo.GetAllVisibleAsync();
     }
 }
 
 // ─── Upload Photo ─────────────────────────────────────────────────────────────
-public record UploadPhotoCommand(IFormFile File, string Name, string Description, string SceneId) : IRequest<Astronaut>;
+public record UploadPhotoCommand(IFormFile File, string? Name, string? Description, string? SceneId) : IRequest<Astronaut>;
 
 public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Astronaut>
 {
@@ -49,11 +49,11 @@ public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Ast
 
         var astronaut = new Astronaut
         {
-            Name = request.Name,
-            Description = request.Description,
+            Name = request.Name ?? "",
+            Description = request.Description ?? "",
             CloudinaryUrl = url,
             CloudinaryPublicId = publicId,
-            SceneId = request.SceneId,
+            SceneId = string.IsNullOrEmpty(request.SceneId) ? null : request.SceneId,
             Order = nextOrder,
             IsVisible = true
         };
@@ -79,7 +79,7 @@ public class UpdatePhotoCommandHandler : IRequestHandler<UpdatePhotoCommand>
 
         if (request.Name is not null) astronaut.Name = request.Name;
         if (request.Description is not null) astronaut.Description = request.Description;
-        if (request.SceneId is not null) astronaut.SceneId = request.SceneId;
+        if (request.SceneId != null) astronaut.SceneId = request.SceneId == "" ? null : request.SceneId;
         if (request.Order.HasValue) astronaut.Order = request.Order.Value;
         if (request.IsVisible.HasValue) astronaut.IsVisible = request.IsVisible.Value;
 

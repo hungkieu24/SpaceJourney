@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { useJourneyStore, type Astronaut } from '../../store/journeyStore'
 
@@ -24,7 +24,7 @@ export function AstronautFloat({
   const controls = useAnimation()
   const [isPaused, setIsPaused] = useState(false)
 
-  const getAnimation = () => {
+  const getAnimation = (): any => {
     switch (motionStyle) {
       case 'orbit':
         return {

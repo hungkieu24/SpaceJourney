@@ -22,7 +22,7 @@ public class Astronaut
 
     /// <summary>ID của cảnh mà ảnh này thuộc về</summary>
     [BsonRepresentation(BsonType.ObjectId)]
-    public string SceneId { get; set; } = string.Empty;
+    public string? SceneId { get; set; } = null;
 
     /// <summary>Thứ tự hiển thị trong cảnh (admin kéo thả)</summary>
     public int Order { get; set; }

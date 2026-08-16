@@ -57,5 +57,5 @@ public class PhotosController : ControllerBase
     }
 }
 
-public record UploadPhotoRequest(IFormFile? File, string Name, string Description, string SceneId);
+public record UploadPhotoRequest(IFormFile? File, string? Name, string? Description, string? SceneId);
 public record UpdatePhotoRequest(string? Name, string? Description, string? SceneId, int? Order, bool? IsVisible);

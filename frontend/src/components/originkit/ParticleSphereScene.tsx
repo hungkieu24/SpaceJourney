@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { photosApi } from '../../api/client'
 import { AstronautFloat } from '../astronaut/AstronautFloat'
 import type { Astronaut } from '../../store/journeyStore'
-
-// Placeholder Particle Sphere — sẽ thay bằng Originkit component
+import RisingLines from './RisingLines'
 function ParticleSphereVisual() {
   return (
     <div style={{ position: 'relative', width: '400px', height: '400px' }}>
@@ -53,16 +52,16 @@ export function ParticleSphereScene({ sceneId, title, description }: ParticleSph
   }, [sceneId])
 
   return (
-    <div className="scene-wrapper" style={{ background: 'radial-gradient(ellipse at center, #0d0824 0%, #030712 70%)' }}>
-      {/* Glitter background */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'url("data:image/svg+xml,%3Csvg width=\'400\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'1\' fill=\'rgba(255,255,255,0.6)\'/%3E%3Ccircle cx=\'150\' cy=\'80\' r=\'0.5\' fill=\'rgba(255,255,255,0.4)\'/%3E%3Ccircle cx=\'300\' cy=\'200\' r=\'1\' fill=\'rgba(167,139,250,0.7)\'/%3E%3Ccircle cx=\'80\' cy=\'300\' r=\'0.5\' fill=\'rgba(255,255,255,0.5)\'/%3E%3Ccircle cx=\'350\' cy=\'100\' r=\'0.8\' fill=\'rgba(167,139,250,0.6)\'/%3E%3C/svg%3E") repeat',
-        opacity: 0.4,
-        pointerEvents: 'none',
-      }} />
-
-      <ParticleSphereVisual />
+    <div className="scene-wrapper" style={{ background: '#000000', width: '100vw', height: '100dvh', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+        <RisingLines 
+            color="#a78bfa" 
+            horizonColor="#7c3aed" 
+            particles={1000} 
+            riseSpeed={30} 
+            scale={8} 
+        />
+      </div>
 
       {astronauts.map((a, i) => (
         <AstronautFloat

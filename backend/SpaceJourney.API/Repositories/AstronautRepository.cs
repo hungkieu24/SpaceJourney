@@ -25,11 +25,14 @@ public class AstronautRepository
     public async Task<List<Astronaut>> GetAllVisibleAsync() =>
         await _astronauts.Find(a => a.IsVisible).SortBy(a => a.Order).ToListAsync();
 
-    public async Task<List<Astronaut>> GetBySceneIdAsync(string sceneId) =>
+    public async Task<List<Astronaut>> GetAllAdminAsync() =>
+        await _astronauts.Find(FilterDefinition<Astronaut>.Empty).SortBy(a => a.Order).ToListAsync();
+
+    public async Task<List<Astronaut>> GetBySceneIdAsync(string? sceneId) =>
         await _astronauts.Find(a => a.SceneId == sceneId && a.IsVisible)
             .SortBy(a => a.Order).ToListAsync();
 
-    public async Task<List<Astronaut>> GetAllBySceneIdAsync(string sceneId) =>
+    public async Task<List<Astronaut>> GetAllBySceneIdAsync(string? sceneId) =>
         await _astronauts.Find(a => a.SceneId == sceneId)
             .SortBy(a => a.Order).ToListAsync();
 

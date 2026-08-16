@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 export function LandscapeGuard() {
   // Dùng CSS media query để handle — component này chỉ cần render DOM
   return (
