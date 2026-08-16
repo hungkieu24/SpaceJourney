@@ -236,9 +236,10 @@ export function PhotoManager() {
   }
 
   return (
-    <div>
-      <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>📸 Quản lý ảnh</h1>
-      <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>Upload, sắp xếp và quản lý ảnh phi hành gia.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
+      <div style={{ flexShrink: 0 }}>
+        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>📸 Quản lý ảnh</h1>
+        <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>Upload, sắp xếp và quản lý ảnh phi hành gia.</p>
 
       {/* Upload form */}
       <div className="admin-card" style={{ marginBottom: '24px' }}>
@@ -276,7 +277,7 @@ export function PhotoManager() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         {/* Filter by scene (Droppable Tabs) */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <div style={{ flexShrink: 0, display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
           <SceneTab 
             scene={null} 
             active={filterSceneId === ''} 
@@ -295,8 +296,9 @@ export function PhotoManager() {
         </div>
 
         {/* Photo Grid with DnD (Sortable inside the list) */}
-        <SortableContext items={displayed.map(p => p.id)} strategy={rectSortingStrategy}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
+        <div className="photo-grid-scroll" style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', paddingBottom: '32px' }}>
+          <SortableContext items={displayed.map(p => p.id)} strategy={rectSortingStrategy}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
             {displayed.map(photo => (
               <SortablePhoto
                 key={photo.id}
@@ -309,14 +311,15 @@ export function PhotoManager() {
             ))}
           </div>
         </SortableContext>
-      </DndContext>
 
-      {displayed.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--color-text-muted)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📸</div>
-          <p>Chưa có ảnh nào. Upload ảnh đầu tiên!</p>
+        {displayed.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '60px', color: 'var(--color-text-muted)' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📸</div>
+            <p>Chưa có ảnh nào. Upload ảnh đầu tiên!</p>
+          </div>
+        )}
         </div>
-      )}
+      </DndContext>
 
       {/* Edit Modal */}
       {editingPhoto && (
