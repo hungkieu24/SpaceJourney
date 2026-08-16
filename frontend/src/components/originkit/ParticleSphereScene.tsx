@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { photosApi } from '../../api/client'
 import { AstronautFloat } from '../astronaut/AstronautFloat'
 import type { Astronaut } from '../../store/journeyStore'
@@ -51,6 +51,11 @@ export function ParticleSphereScene({ sceneId, title, description }: ParticleSph
     photosApi.getAll(sceneId).then(res => setAstronauts(res.data))
   }, [sceneId])
 
+  const positions = React.useMemo(() => astronauts.map(() => ({
+    x: 100 + Math.random() * (typeof window !== 'undefined' ? window.innerWidth - 200 : 1000),
+    y: 80 + Math.random() * (typeof window !== 'undefined' ? window.innerHeight - 200 : 800)
+  })), [astronauts])
+
   return (
     <div className="scene-wrapper" style={{ background: '#000000', width: '100vw', height: '100dvh', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
@@ -66,8 +71,8 @@ export function ParticleSphereScene({ sceneId, title, description }: ParticleSph
       {astronauts.map((a, i) => (
         <AstronautFloat
           key={a.id} astronaut={a} motionStyle="float-up"
-          initialX={100 + Math.random() * (window.innerWidth - 200)}
-          initialY={80 + Math.random() * (window.innerHeight - 200)}
+          initialX={positions[i]?.x || 0}
+          initialY={positions[i]?.y || 0}
           delay={i * 0.8}
         />
       ))}

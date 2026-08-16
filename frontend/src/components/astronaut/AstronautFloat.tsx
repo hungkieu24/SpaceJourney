@@ -13,14 +13,15 @@ interface AstronautFloatProps {
   delay?: number
 }
 
-export function AstronautFloat({
+export const AstronautFloat = React.memo(function AstronautFloat({
   astronaut,
   motionStyle,
   initialX,
   initialY,
   delay = 0,
 }: AstronautFloatProps) {
-  const { openAstronaut } = useJourneyStore()
+  const openAstronaut = useJourneyStore(state => state.openAstronaut)
+
 
   const getAnimation = (): any => {
     switch (motionStyle) {
@@ -137,5 +138,5 @@ export function AstronautFloat({
       <div className="name-tag">{astronaut.name}</div>
     </motion.div>
   )
-}
+})
 
