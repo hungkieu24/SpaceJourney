@@ -61,9 +61,10 @@ public class UploadPhotoCommandHandler : IRequestHandler<UploadPhotoCommand, Ast
 
         var (url, publicId) = await _cloudinary.UploadAsync(request.File);
 
-        // Order = cuối cùng trong cảnh
+        // Xếp ảnh mới lên đầu bằng cách lấy order nhỏ nhất trừ đi 1
         var existingInScene = await _repo.GetAllBySceneIdAsync(request.SceneId);
-        var nextOrder = existingInScene.Count;
+        var minOrder = existingInScene.Any() ? existingInScene.Min(a => a.Order) : 0;
+        var nextOrder = minOrder - 1;
 
         var astronaut = new Astronaut
         {
