@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { useJourneyStore, type Astronaut } from '../../store/journeyStore'
 
@@ -123,12 +123,13 @@ export function AstronautFloat({
         }
     }
   }
+  const animationProps = React.useMemo(() => getAnimation(), [motionStyle, initialX, initialY, delay])
 
   return (
     <motion.div
       className="astronaut-card"
       style={{ top: 0, left: 0 }}
-      animate={getAnimation()}
+      animate={animationProps}
       whileHover={{ scale: 1.15, zIndex: 10 }}
       onClick={() => openAstronaut(astronaut)}
     >
@@ -137,3 +138,4 @@ export function AstronautFloat({
     </motion.div>
   )
 }
+
