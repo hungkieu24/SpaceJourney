@@ -69,7 +69,7 @@ export function AstronautFloat({
   return (
     <motion.div
       className="astronaut-card"
-      style={{ left: initialX, top: initialY }}
+      style={{ top: 0, left: 0 }}
       animate={getAnimation()}
       whileHover={{ scale: 1.15, zIndex: 10 }}
       onClick={() => openAstronaut(astronaut)}
