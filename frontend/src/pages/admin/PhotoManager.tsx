@@ -394,7 +394,7 @@ export function PhotoManager() {
           background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
         }} onClick={closeEditModal}>
-          <div className="admin-card" style={{ maxWidth: '400px', width: '100%', padding: '24px' }} onClick={e => e.stopPropagation()}>
+          <div className="admin-card" style={{ maxWidth: '400px', width: '100%', padding: '24px', background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(124, 58, 237, 0.3)', boxShadow: '0 0 40px rgba(0,0,0,0.8)' }} onClick={e => e.stopPropagation()}>
             <h2 style={{ marginBottom: '16px' }}>Chỉnh sửa thông tin</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <input 
