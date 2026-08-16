@@ -274,6 +274,7 @@ export function PhotoManager() {
           </div>
         )}
       </div>
+      </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         {/* Filter by scene (Droppable Tabs) */}
