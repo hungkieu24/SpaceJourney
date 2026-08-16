@@ -282,42 +282,46 @@ export function PhotoManager() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
       <div style={{ flexShrink: 0 }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>📸 Quản lý ảnh</h1>
-        <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>Upload, sắp xếp và quản lý ảnh phi hành gia.</p>
-
-      {/* Upload form */}
-      <div className="admin-card" style={{ marginBottom: '24px' }}>
-        <h2>Upload ảnh mới</h2>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={e => setUploadForm({ files: Array.from(e.target.files || []) })}
-            style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', flex: 1 }}
-          />
-          <button
-            className="btn-primary"
-            onClick={handleUpload}
-            disabled={uploading || uploadForm.files.length === 0}
-          >
-            {uploading ? '⬆️ Đang upload...' : '⬆️ Upload'}
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>📸 Quản lý ảnh</h1>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>Upload, sắp xếp và quản lý ảnh.</p>
+          </div>
+          
+          {/* Upload form inline */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.03)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={e => setUploadForm({ files: Array.from(e.target.files || []) })}
+              style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', maxWidth: '200px' }}
+            />
+            <button
+              className="btn-primary"
+              onClick={handleUpload}
+              disabled={uploading || uploadForm.files.length === 0}
+              style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+            >
+              {uploading ? '⬆️ Đang tải...' : '⬆️ Upload'}
+            </button>
+          </div>
         </div>
+
         {uploadForm.files.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.03)', padding: '8px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', marginRight: '8px' }}>Ảnh chờ upload:</span>
             {uploadForm.files.slice(0, 5).map((f, i) => (
               <ThumbnailPreview key={i} file={f} />
             ))}
             {uploadForm.files.length > 5 && (
-              <div style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', fontSize: '0.8rem', border: '1px dashed var(--color-border)' }}>
+              <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', fontSize: '0.8rem', border: '1px dashed var(--color-border)' }}>
                 +{uploadForm.files.length - 5}
               </div>
             )}
           </div>
         )}
-      </div>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
