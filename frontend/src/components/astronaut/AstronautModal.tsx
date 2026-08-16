@@ -22,7 +22,7 @@ export function AstronautModal() {
             exit={{ opacity: 0, scale: 0.85, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-[min(380px,90vw)]"
+            className="w-[min(900px,90vw)]"
           >
             <StarBorder color="rgba(6, 182, 212, 0.8)">
               <div className="bg-slate-900/95 p-6 rounded-xl relative">

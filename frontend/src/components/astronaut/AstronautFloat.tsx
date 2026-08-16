@@ -5,7 +5,7 @@ import { useJourneyStore, type Astronaut } from '../../store/journeyStore'
 interface AstronautFloatProps {
   astronaut: Astronaut
   /** Animation style phụ thuộc vào component cảnh */
-  motionStyle: 'orbit' | 'float' | 'spiral-in' | 'tornado-swirl' | 'drift-forward'
+  motionStyle: 'orbit' | 'float' | 'spiral-in' | 'tornado-swirl' | 'float-up'
   /** Vị trí ban đầu — random trong cảnh */
   initialX: number
   initialY: number
@@ -21,8 +21,6 @@ export function AstronautFloat({
   delay = 0,
 }: AstronautFloatProps) {
   const { openAstronaut } = useJourneyStore()
-  const controls = useAnimation()
-  const [isPaused, setIsPaused] = useState(false)
 
   const getAnimation = (): any => {
     switch (motionStyle) {
@@ -57,37 +55,23 @@ export function AstronautFloat({
           scale: [1, 0.95, 0.9, 0.85, 1],
           transition: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay },
         }
-      case 'drift-forward':
-        const centerX = typeof window !== 'undefined' ? window.innerWidth / 2 : 500
-        const centerY = typeof window !== 'undefined' ? window.innerHeight / 2 : 500
+      case 'float-up':
+        const startY = typeof window !== 'undefined' ? window.innerHeight + 100 : 1000
         return {
-          x: [centerX, initialX],
-          y: [centerY, initialY],
-          scale: [0, 1.2],
-          opacity: [0, 1, 0.8, 0],
-          transition: { duration: 15, repeat: Infinity, ease: 'linear', delay },
+          x: [initialX, initialX + 30, initialX - 30, initialX],
+          y: [startY, -200],
+          rotate: [0, 10, -10, 0],
+          transition: { duration: 25, repeat: Infinity, ease: 'linear', delay },
         }
     }
-  }
-
-  const handleHoverStart = () => {
-    setIsPaused(true)
-    controls.stop()
-  }
-
-  const handleHoverEnd = () => {
-    setIsPaused(false)
-    controls.start(getAnimation())
   }
 
   return (
     <motion.div
       className="astronaut-card"
       style={{ left: initialX, top: initialY }}
-      animate={isPaused ? {} : getAnimation()}
+      animate={getAnimation()}
       whileHover={{ scale: 1.15, zIndex: 10 }}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
       onClick={() => openAstronaut(astronaut)}
     >
       <img src={astronaut.cloudinaryUrl} alt={astronaut.name} loading="lazy" />
